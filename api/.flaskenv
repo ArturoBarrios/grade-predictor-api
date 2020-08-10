@@ -1,0 +1,2 @@
+FLASK_APP=grader.py
+FLASK_ENV=development
