@@ -4,7 +4,7 @@ from flask import request
 from MusicPredictionFiles.scripts.PredictSongsNoGUI2 import Predictor
 import time
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app)
 
 
 @app.route('/')
