@@ -4,13 +4,20 @@ from flask import request
 from MusicPredictionFiles.scripts.PredictSongsNoGUI2 import Predictor
 import time
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+
+@app.route('/')
+def default():
+    return "Hello"
+
+@app.route('/test')
+def defaultTest():
+    return "Hello Test"
 
 @app.route('/get_grades', methods=['GET', 'POST'])
 def get_grades(): 
-    print("ressdfffff: ", type(request.files["file0"].filename))
-    print("model arggg: ", request.args.get('model', ''))
-
+    app.logger.info("testing info log")
     i = 0
     num_of_files = len(request.files)
     grades = dict()
@@ -24,7 +31,7 @@ def get_grades():
         grades[request.files[file_name].filename] = grade
         i+=1
 
-
+    # grades["test"] = 1
     return grades
 
 
@@ -67,4 +74,5 @@ def getFileNames(index):
     return res
 
       
-    
+if __name__ == "__main__":
+    app.run(threaded=True)

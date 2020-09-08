@@ -2036,7 +2036,7 @@ class Predictor:
 
         #replace all commas in file name
         file_name = str(file).replace(",","")
-        feature_values['Name'] = str(file_name)
+        feature_values['Name'] = file_name
         if(feature_index==0):
             labels_file = open("temp2.txt","w")
             f = open("temp2.csv","w")
