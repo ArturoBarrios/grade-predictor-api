@@ -4,7 +4,7 @@ from flask import request
 from MusicPredictionFiles.scripts.PredictSongsNoGUI2 import Predictor
 import time
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 @app.route('/')
@@ -41,32 +41,32 @@ def getFileNames(index):
         res = ["models/abrsm_all_1.sav", "data/abrsm_all_1.csv", 500,9,False,False]
     elif(index=="ABRSM(1-8)V2"):
         res = ["models/abrsm_all_2.sav", "data/abrsm_all_1.csv", 300,9,True,False]
-    elif(index=="ABRSM(1-8)V3"):
-        res = ["models/abrsm_all_3.sav", "data/abrsm_all_1.csv", 300,9,True,True]
+    # elif(index=="ABRSM(1-8)V3"):
+    #     res = ["models/abrsm_all_3.sav", "data/abrsm_all_1.csv", 300,9,True,True]
     elif(index=="ABRSM_2019_2020(1-8)V1"):
         res = ["models/abrsm_2019_2020_all_1.sav", "data/abrsm_2019_2020_all_1.csv", 300,9,False,False]
     elif(index=="ABRSM_2019_2020(1-8)V2"):
         res = ["models/abrsm_2019_2020_all_2.sav", "data/abrsm_2019_2020_all_1.csv", 300,9,True,False]
-    elif(index=="ABRSM_2019_2020(1-8)V3"):
-        res = ["models/abrsm_2019_2020_all_3.sav", "data/abrsm_2019_2020_all_1.csv", 300,9,True,True]
+    # elif(index=="ABRSM_2019_2020(1-8)V3"):
+    #     res = ["models/abrsm_2019_2020_all_3.sav", "data/abrsm_2019_2020_all_1.csv", 300,9,True,True]
     elif(index=="ABRSM_2020_2021(1-8)V1"):
         res = ["models/abrsm_2020_2021_all_1.sav", "data/abrsm_2020_2021_all_1.csv", 300,9,False,False]
     elif(index=="ABRSM_2020_2021(1-8)V2"):
         res = ["models/abrsm_2020_2021_all_2.sav", "data/abrsm_2020_2021_all_1.csv", 300,9,True,False]
-    elif(index=="ABRSM_2020_2021(1-8)V3"):
-        res = ["models/abrsm_2020_2021_all_3.sav", "data/abrsm_2020_2021_all_1.csv", 300,9,True,True]
+    # elif(index=="ABRSM_2020_2021(1-8)V3"):
+    #     res = ["models/abrsm_2020_2021_all_3.sav", "data/abrsm_2020_2021_all_1.csv", 300,9,True,True]
     elif(index=="ABRSM_2019_2021(1-8)V1"):
         res = ["models/abrsm_2019_2021_all_1.sav", "data/abrsm_2019_2021_all_1.csv", 600,9,False,False]
     elif(index=="ABRSM_2019_2021(1-8)V2"):
         res = ["models/abrsm_2019_2021_all_2.sav", "data/abrsm_2019_2021_all_1.csv", 600,9,True,False]
-    elif(index=="ABRSM_2019_2021(1-8)V3"):
-        res = ["models/abrsm_2019_2021_all_3.sav", "data/abrsm_2019_2021_all_1.csv", 600,9,True,True]
+    # elif(index=="ABRSM_2019_2021(1-8)V3"):
+    #     res = ["models/abrsm_2019_2021_all_3.sav", "data/abrsm_2019_2021_all_1.csv", 600,9,True,True]
     elif(index=="Piano Marvel(0-10)V1"):
         res = ["models/piano_marvel_all_2000_1.sav", "data/piano_marvel_all_2000_1.csv", 1000,9, False, False]
     elif(index=="Piano Marvel(0-10)V2"):
         res = ["models/piano_marvel_all_2000_2.sav", "data/piano_marvel_all_2000_1.csv", 1000,9,True,False]
-    elif(index=="Piano Marvel(0-10)V3"):
-        res = ["models/piano_marvel_all_2000_3.sav", "data/piano_marvel_all_2000_1.csv", 1000,9, True, True]
+    # elif(index=="Piano Marvel(0-10)V3"):
+    #     res = ["models/piano_marvel_all_2000_3.sav", "data/piano_marvel_all_2000_1.csv", 1000,9, True, True]
     else:
         res = ["models/abrsm_all_1.sav", "data/abrsm_all_1.csv", 300,9,False,False]
 
