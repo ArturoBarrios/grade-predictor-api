@@ -3,9 +3,14 @@ from flask_cors import CORS
 from flask import request
 from MusicPredictionFiles.scripts.PredictSongsNoGUI2 import Predictor
 import time
+import redis
+import random
+import json
+
+
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-
+r = redis.Redis(host='redis-17950.c15.us-east-1-4.ec2.cloud.redislabs.com', port=17950, password="nGGO6bq40I0h9YXJaqGyzNUD1LFU0npw")
 
 @app.route('/')
 def default():
@@ -31,9 +36,22 @@ def get_grades():
         grades[request.files[file_name].filename] = grade
         i+=1
 
-    # grades["test"] = 1
-    return grades
+    key = str(random.randint(1,100000000))
+    #stringify grades object
+    result = json.dumps(grades) 
+    r.set(key,result,10)
+    return key
 
+@app.route('/get_grades_key', methods=['GET', 'POST'])
+def getGradesKey():
+    key = request.args.get("key")
+    print("getting gradess: ", key)
+    
+    grades = r.get(key)
+    print(grades)
+    # app.logger.info("got grades: ", grades)
+
+    return "grades"
 
 def getFileNames(index):
     res = None
@@ -41,8 +59,8 @@ def getFileNames(index):
         res = ["models/abrsm_all_1.sav", "data/abrsm_all_1.csv", 500,9,False,False]
     elif(index=="ABRSM(1-8)V2"):
         res = ["models/abrsm_all_2.sav", "data/abrsm_all_1.csv", 300,9,True,False]
-    # elif(index=="ABRSM(1-8)V3"):
-    #     res = ["models/abrsm_all_3.sav", "data/abrsm_all_1.csv", 300,9,True,True]
+    elif(index=="ABRSM(1-8)V3"):
+        res = ["models/abrsm_all_3.sav", "data/abrsm_all_1.csv", 300,9,True,True]
     elif(index=="ABRSM_2019_2020(1-8)V1"):
         res = ["models/abrsm_2019_2020_all_1.sav", "data/abrsm_2019_2020_all_1.csv", 300,9,False,False]
     elif(index=="ABRSM_2019_2020(1-8)V2"):
