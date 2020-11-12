@@ -2125,7 +2125,7 @@ class Predictor:
         level_of_song = 0
         for grade in predictions:
             # print(labels[i],":",grade)
-            level_of_song = grade#math.floor(grade)
+            level_of_song = float(grade)#math.floor(grade)
             i+=1
         print("level of song: ", level_of_song)
         return level_of_song

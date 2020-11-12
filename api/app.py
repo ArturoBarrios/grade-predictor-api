@@ -25,33 +25,51 @@ def get_grades():
     app.logger.info("testing info log")
     i = 0
     num_of_files = len(request.files)
-    grades = dict()
+    key = str(request.args.get('key',''))
+    print("this is the fucking key: ", key)
+    # grades = dict()
+    grades = "{"
     files_to_use = getFileNames(str(request.args.get('model','')))
     while i<num_of_files:
         file_name = "file"+str(i)
         file = request.files[file_name].read()
         prediction = Predictor()
         grade = prediction.predictSong(file, files_to_use[0],files_to_use[1], files_to_use[2], files_to_use[3],files_to_use[4],files_to_use[5])
-        print("prediction: ", prediction)
-        grades[request.files[file_name].filename] = grade
+        # print("prediction: ", prediction)
+        # grades[request.files[file_name].filename] = grade
+        grades += "\""+request.files[file_name].filename+"\""+":"+"\""+str(grade)+"\""+","
         i+=1
+    #remove comma
+    grades = grades[0:len(grades)-1]
+    grades += "}"
 
-    key = str(random.randint(1,100000000))
+    
     #stringify grades object
-    result = json.dumps(grades) 
-    r.set(key,result,10)
+
+    result = grades
+    print("result of gradess: ", result) 
+    print("typeof: ", type(grades))
+    r.set(key,result)
     return key
 
 @app.route('/get_grades_key', methods=['GET', 'POST'])
 def getGradesKey():
     key = request.args.get("key")
-    print("getting gradess: ", key)
+    print("getting gradesssssss: ", key)
+    grades = ""
+    result = dict()
+    try:
+        print("in try")
+        grades = r.get(str(key))
+        print("grades: ", grades)
+        result = json.loads(grades)
+    except:
+        result = dict()
     
-    grades = r.get(key)
-    print(grades)
+    # print(grades)
     # app.logger.info("got grades: ", grades)
 
-    return "grades"
+    return result
 
 def getFileNames(index):
     res = None
