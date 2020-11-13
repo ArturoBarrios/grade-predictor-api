@@ -10,7 +10,7 @@ import json
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-r = redis.Redis(host='redis-17950.c15.us-east-1-4.ec2.cloud.redislabs.com', port=17950, password="nGGO6bq40I0h9YXJaqGyzNUD1LFU0npw")
+r = redis.Redis(host='redis-10964.c89.us-east-1-3.ec2.cloud.redislabs.com', port=10964, password="0VY6S5d79kTkY5tlPjbfrM0Fk8vKdFjJ")
 
 @app.route('/')
 def default():
