@@ -28,6 +28,10 @@ def get_grades():
     key = str(request.args.get('key',''))
     print("this is the  key: ", key)
     print("this is more text!!!")
+    print("this is the  key: ", key)
+    print("this is more text!!!")
+    print("this is the  key: ", key)
+    print("this is more text!!!")
     # grades = dict()
     grades = "{"
     files_to_use = getFileNames(str(request.args.get('model','')))
