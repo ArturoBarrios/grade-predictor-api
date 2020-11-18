@@ -2088,6 +2088,7 @@ class Predictor:
         
         data = pd.read_csv(data_name)
         data = data.sample(frac=1).reset_index(drop=True)
+        
         data = data[data.Grade<less_than_grade]
         data = data.groupby('Grade')\
             .apply(lambda x: x[:N])

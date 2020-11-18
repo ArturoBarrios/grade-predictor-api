@@ -6,26 +6,66 @@ import time
 import redis
 import random
 import json
+from rq import Queue
+from rq.job import Job
+from worker import conn
 
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-r = redis.Redis(host='redis-17338.c62.us-east-1-4.ec2.cloud.redislabs.com', port=17338, password="nc2FScK8PGPQZklgmP4nNA9ArxN4m3qE")
+r = redis.Redis(host='redis-19075.c74.us-east-1-4.ec2.cloud.redislabs.com', port=19075, password="jPzU5Mm1rynGQJ3WQEwRgjiiy26WsKNx")
+
+q = Queue(connection=conn)
 
 @app.route('/')
 def default():
     return "Hello"
-
-@app.route('/test')
+#key, count, model, model, model, model, model, file, filename
+@app.route('/test',methods=['GET', 'POST'])
 def defaultTest():
-    return "Hello Test"
-
-@app.route('/get_grades', methods=['GET', 'POST'])
-def get_grades(): 
-    app.logger.info("testing info log")
-    i = 0
+    print("test called")
+    url = "test"
+    #
     num_of_files = len(request.files)
+   
+    i = 0
+    arr = []
+    files_to_use = getFileNames(str(request.args.get('model','')))
     key = str(request.args.get('key',''))
+    arr.append(str(request.args.get('key','')))
+    arr.append(num_of_files)
+    arr.append(files_to_use[0])
+    arr.append(files_to_use[1])
+    arr.append(str(files_to_use[2]))
+    arr.append(str(files_to_use[3]))
+    arr.append(files_to_use[4])
+    arr.append(files_to_use[5])
+    while i<num_of_files:
+        file_name = "file"+str(i)
+        file = request.files[file_name].read()
+        actual_file_name = request.files[file_name].filename
+        arr.append(file)
+        arr.append(actual_file_name)
+        
+        i+=1
+
+    job = q.enqueue_call(
+            func=get_grades, args=(arr,), result_ttl=5000
+        )
+    return key
+    
+
+def test_function_params(url):
+    print("test function params called array: ", url)
+    return "test function params returned"
+
+
+# @app.route('/get_grades', methods=['GET', 'POST'])
+def get_grades(arr): 
+    i = 0
+    j = 0
+    num_of_files = arr[1]
+    key = arr[0]
     print("this is the  key: ", key)
     print("this is more text!!!")
     print("this is the  key: ", key)
@@ -34,16 +74,19 @@ def get_grades():
     print("this is more text!!!")
     # grades = dict()
     grades = "{"
-    files_to_use = getFileNames(str(request.args.get('model','')))
-    while i<num_of_files:
-        file_name = "file"+str(i)
-        file = request.files[file_name].read()
+    # files_to_use = arr[1]
+    arr_of_names_and_songs = arr[8:]
+    while j<num_of_files:
+        # file_name = "file"+str(i)
+        file = arr_of_names_and_songs[i] #request.files[file_name].read()
         prediction = Predictor()
-        grade = prediction.predictSong(file, files_to_use[0],files_to_use[1], files_to_use[2], files_to_use[3],files_to_use[4],files_to_use[5])
+        print("bool values:     ",arr[6], "    ", arr[7])
+        grade = prediction.predictSong(file, arr[2],arr[3], 300, 9,arr[6],arr[7])
         # print("prediction: ", prediction)
         # grades[request.files[file_name].filename] = grade
-        grades += "\""+request.files[file_name].filename+"\""+":"+"\""+str(grade)+"\""+","
-        i+=1
+        grades += "\""+arr_of_names_and_songs[i+1]+"\""+":"+"\""+str(grade)+"\""+","
+        i+=2
+        j+=1
     #remove comma
     grades = grades[0:len(grades)-1]
     grades += "}"
