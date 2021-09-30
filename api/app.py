@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask import request
 from MusicPredictionFiles.scripts.PredictSongsNoGUI2 import Predictor
 import time
@@ -12,25 +12,32 @@ from worker import conn
 
 
 app = Flask(__name__)
+
 CORS(app, resources={r"/*": {"origins": "*"}})
 r = redis.Redis(host='redis-19075.c74.us-east-1-4.ec2.cloud.redislabs.com', port=19075, password="jPzU5Mm1rynGQJ3WQEwRgjiiy26WsKNx")
 
 q = Queue(connection=conn)
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST', 'OPTIONS'])
+@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def default():
     return "Hello"
+
+
+
 #key, count, model, model, model, model, model, file, filename
-@app.route('/test',methods=['GET', 'POST'])
+@app.route('/test/',methods=['GET', 'POST', 'OPTIONS'])
 def defaultTest():
-    print("test called")
-    url = "test"
+    # print("test called")
+    # url = "test"
+    # return "test"
     #
     num_of_files = len(request.files)
    
     i = 0
     arr = []
     files_to_use = getFileNames(str(request.args.get('model','')))
+    
     key = str(request.args.get('key',''))
     arr.append(str(request.args.get('key','')))
     arr.append(num_of_files)
@@ -53,10 +60,11 @@ def defaultTest():
             func=get_grades, args=(arr,), result_ttl=5000
         )
     return key
+    # return "test"
     
 
 def test_function_params(url):
-    print("test function params called array: ", url)
+    # print("test function params called array: ", url)
     return "test function params returned"
 
 
@@ -66,13 +74,7 @@ def get_grades(arr):
     j = 0
     num_of_files = arr[1]
     key = arr[0]
-    print("this is the  key: ", key)
-    print("this is more text!!!")
-    print("this is the  key: ", key)
-    print("this is more text!!!")
-    print("this is the  key: ", key)
-    print("this is more text!!!")
-    # grades = dict()
+
     grades = "{"
     # files_to_use = arr[1]
     arr_of_names_and_songs = arr[8:]
@@ -80,7 +82,7 @@ def get_grades(arr):
         # file_name = "file"+str(i)
         file = arr_of_names_and_songs[i] #request.files[file_name].read()
         prediction = Predictor()
-        print("bool values:     ",arr[6], "    ", arr[7])
+        # print("bool values:     ",arr[6], "    ", arr[7])
         grade = prediction.predictSong(file, arr[2],arr[3], 300, 9,arr[6],arr[7])
         # print("prediction: ", prediction)
         # grades[request.files[file_name].filename] = grade
@@ -95,21 +97,22 @@ def get_grades(arr):
     #stringify grades object
 
     result = grades
-    print("result of gradess: ", result) 
-    print("typeof: ", type(grades))
+    # print("result of gradess: ", result) 
+    # print("typeof: ", type(grades))
     r.set(key,result)
     return key
+    
 
 @app.route('/get_grades_key', methods=['GET', 'POST'])
 def getGradesKey():
     key = request.args.get("key")
-    print("getting gradesssssss: ", key)
+    # print("getting gradesssssss: ", key)
     grades = ""
     result = dict()
     try:
-        print("in try")
+        # print("in try")
         grades = r.get(str(key))
-        print("grades: ", grades)
+        # print("grades: ", grades)
         result = json.loads(grades)
     except:
         result = dict()
